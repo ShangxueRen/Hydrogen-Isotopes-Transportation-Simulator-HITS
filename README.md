@@ -26,24 +26,17 @@ These codes are primarily developed for the study of hydrogen isotope transport 
 
 The hydrogen transport is described by a diffusion–trapping system:
 
-$$
-\frac{\partial C}{\partial t}
-= \nabla \cdot (D(T)\nabla C)
-- \sum_i k_i C (N_i - C_i)
-$$
+$$\frac{\partial C}{\partial t} = \nabla \cdot (D(T)\nabla C) - \sum_i \[k_{t,i} C (\eta_i - C_{t,i})-k_{d,i} C_{t,i}\] + S$$
 
-$$
-\frac{\partial C_i}{\partial t}
-= k_i C (N_i - C_i) - k_i^{\text{detrap}} C_i
-$$
+$$\frac{\partial C_{t,i}}{\partial t} = k_{t,i} C (\eta_i - C_{t,i})-k_{d,i} C_{t,i}$$
 
 Where:
 
-- \( C \): mobile hydrogen concentration  
-- \( C_i \): trapped hydrogen concentration for trap \( i \)  
-- \( D(T) \): temperature-dependent diffusion coefficient  
-- \( N_i \): trap density  
-- \( k_i \), \( k_i^{\text{detrap}} \): trapping and detrapping rate constants  
+- C: mobile hydrogen concentration  
+- C_{t,i}: trapped hydrogen concentration for trap i  
+- D(T): temperature-dependent diffusion coefficient  
+- \eta: trap density  
+- k_{t,i}, k_{d,i}: trapping and detrapping rate constants
 
 The TDS signal is obtained from the surface flux:
 
