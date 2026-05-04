@@ -23,3 +23,30 @@ The codes allow flexible user-defined configurations, including temperature hist
 These codes are primarily developed for the study of hydrogen isotope transport and retention in fusion-relevant materials, such as tungsten plasma-facing components. They can also be extended to other material systems involving diffusion–trapping processes or spatially heterogeneous diffusion behavior.
 
 ## 2. Physical Model
+
+The hydrogen transport is described by a diffusion–trapping system:
+
+$$
+\frac{\partial C}{\partial t}
+= \nabla \cdot (D(T)\nabla C)
+- \sum_i k_i C (N_i - C_i)
+$$
+
+$$
+\frac{\partial C_i}{\partial t}
+= k_i C (N_i - C_i) - k_i^{\text{detrap}} C_i
+$$
+
+Where:
+
+- \( C \): mobile hydrogen concentration  
+- \( C_i \): trapped hydrogen concentration for trap \( i \)  
+- \( D(T) \): temperature-dependent diffusion coefficient  
+- \( N_i \): trap density  
+- \( k_i \), \( k_i^{\text{detrap}} \): trapping and detrapping rate constants  
+
+The TDS signal is obtained from the surface flux:
+
+$$
+J = -D \frac{\partial C}{\partial x}
+$$
