@@ -21,3 +21,5 @@ From a numerical perspective, both HITs and He-HITs are constructed using a fini
 The codes allow flexible user-defined configurations, including temperature history (e.g., linear heating), defect distribution functions, boundary conditions, and solver parameters. The outputs include concentration profiles, surface flux, and simulated TDS spectra. By comparing simulation results with experimental TDS data, the framework can be used to infer defect types and their associated parameters in materials.
 
 These codes are primarily developed for the study of hydrogen isotope transport and retention in fusion-relevant materials, such as tungsten plasma-facing components. They can also be extended to other material systems involving diffusion–trapping processes or spatially heterogeneous diffusion behavior.
+
+## 2. Physical Model
