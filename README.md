@@ -49,28 +49,27 @@ $$
 ---
 
 ## 3. Input Configuration
-This section introduces the main input parameters used in the HITs and He-HITs programs. All program inputs are organized in the form of Python dictionaries. By modifying different configuration modules, users can control the spatial grid, temperature history, material system, trap settings, result visualization, and data saving options.
+本节介绍 HITs 与 He-HITs 程序中的主要输入参数。程序的输入全部以 Python 字典形式组织，用户可通过修改不同配置模块，实现对空间网格、温度历史、材料体系、缺陷、结果可视化及保存数据的控制。 
 
-In general, the input parameters can be divided into the following seven parts:
-
-1. One-dimensional spatial grid  
-2. Time and temperature history  
-3. Diffusion coefficient  
-4. Trap and trap-plot configuration  
-5. Injection parameters  
-6. Result visualization parameters  
-7. Data saving parameters  
+整体而言，输入参数可分为以下七个部分： 
+1. 一维空间格子
+2. 时间与温度历史
+3. 扩散系数
+4. 缺陷与缺陷绘图
+5. 注入参数
+6. 结果可视化参数
+7. 数据保存参数
 
 ### 3.1 One-Dimensional Spatial Grid
-HITs and He-HITs both use the finite difference method to calculate one-dimensional hydrogen isotope transport. In the simulation, the spatial coordinate represents the depth direction from the sample surface into the bulk. Therefore, before performing the calculation, the material system must first be spatially discretized to construct a one-dimensional spatial grid for numerical solution.
+HITs与He-HITs均采用有限差分方法计算一维条件下的氢同位素输运行为。模拟中空间坐标表示样品从表面向体内的深度方向。因此，在正式计算前，需要首先对材料体系进行空间离散，建立用于数值求解的一维空间格子。
 
-The program supports two types of spatial grids: a uniform grid with constant spacing throughout the bulk material, and a non-uniform grid with spatially varying grid spacing. The choice of spatial grid directly affects both computational accuracy and efficiency. For the finite difference method adopted in HITs and He-HITs, when a second-order spatial discretization scheme and a first-order implicit time integration scheme are used, the local truncation error can generally be expressed as:
+程序支持两种形式的空间格子：一种是在整个体相中步长保持不变的均匀格子，另一种是步长随空间位置变化的非均匀格子。空间格子的选择会直接影响计算精度和计算效率。对于HITs与He-HITs采用的有限差分方法，在空间离散采用二阶差分格式、时间推进采用一阶隐式格式的情况下，局部截断误差通常可表示为：
 
 $$O(\delta x^2 + \delta t)$$
 
-where $\delta x$ is the spatial step size and $\delta t$ is the time step. Therefore, a smaller spatial step size can generally improve computational accuracy, but it also increases the size of the equation system and the computational cost.
+其中，$\delta x$为空间步长，$\delta t$为时间步长。因此，较小的空间步长通常可以提高计算精度，但也会增加方程组规模和计算时间。
 
-For He-HITs, since the diffusion coefficient can vary with spatial position, a finer spatial grid is recommended in regions where the diffusion coefficient changes significantly, such as near the boundary of the helium bubble layer. This allows the effect of spatially varying diffusion coefficients on hydrogen isotope transport to be described more accurately. For non-uniform grids, excessively large changes between adjacent grid spacings should be avoided, as they may reduce the local accuracy of the finite difference approximation.
+对于He-HITs，由于扩散系数可以随空间位置发生变化，因此在扩散系数变化剧烈的区域，例如氦泡层边界附近，建议采用更细的空间网格，以更准确地描述空间变扩散系数对氢同位素输运行为的影响。对于非均匀格子，相邻网格步长不宜变化过大，否则可能降低局部差分近似的精度。
 
 #### 3.1.1 Uniform Grid
 
@@ -124,18 +123,20 @@ Surface side              Bulk region              Surface side
 
 `Sec1`区域对应步长`minstep1`，`Sec2`区域对应步长`minstep2`，`Bulk`区域对应步长`maxstep`，这三个区域内部的空间步长保持不变；`Transition1`中，步长会从`minstep1`线性地过度到`maxstep`，同理`Transition2`中步长会从`maxstep`线性地变化到`minstep2`。
 
-当 `Sec1_t` 与 `Sec2_t` 中仅有一个被设置为 `True` 时，程序只会在对应一侧生成变步长区域。此时，一维体系将被划分为三个区域。当`'Sec1_t' : True`时：
+当 `Sec1_t` 与 `Sec2_t` 中仅有一个被设置为 `True` 时，程序只会在对应一侧生成变步长区域，此时一维体系将被划分为三个区域。这里，`Sec1_t` 用于控制靠近左侧表面的变步长区域，`Sec2_t` 用于控制靠近右侧表面的变步长区域。
+
+当 `'Sec1_t': True` 且 `'Sec2_t': False` 时，变步长区域位于左侧表面附近，体系划分方式为：
 
 ```text
-Surface side              Bulk region
-| Sec | Transition | Bulk |
+Left surface side              Bulk region
+| Sec1 | Transition1 | Bulk |
 ```
 
-或者在另一侧对应为`'Sec2_t' : True`：
+当 `'Sec1_t': False` 且 `'Sec2_t': True` 时，变步长区域位于右侧表面附近，体系划分方式为：
 
 ```text
-Bulk region              Surface side
-| Bulk | Transition | Sec |
+Bulk region              Right surface side
+| Bulk | Transition2 | Sec2 |
 ```
 各参数的含义如下：
 
