@@ -22,6 +22,8 @@ The codes allow flexible user-defined configurations, including temperature hist
 
 These codes are primarily developed for the study of hydrogen isotope transport and retention in fusion-relevant materials, such as tungsten plasma-facing components. They can also be extended to other material systems involving diffusion–trapping processes or spatially heterogeneous diffusion behavior.
 
+---
+
 ## 2. Physical Model
 
 The hydrogen transport is described by a diffusion–trapping system:
@@ -43,3 +45,24 @@ The TDS signal is obtained from the surface flux:
 $$
 J = -D \frac{\partial C}{\partial x}
 $$
+
+---
+
+## 3. Input Configuration
+This section introduces the main input parameters used in the HITs and He-HITs programs. All program inputs are organized in the form of Python dictionaries. By modifying different configuration modules, users can control the spatial grid, temperature history, material system, trap settings, result visualization, and data saving options.
+
+In general, the input parameters can be divided into the following seven parts:
+
+1. One-dimensional spatial grid  
+2. Time and temperature history  
+3. Diffusion coefficient  
+4. Trap and trap-plot configuration  
+5. Injection parameters  
+6. Result visualization parameters  
+7. Data saving parameters  
+
+### 3.1 One-Dimensional Spatial Grid
+该部分用于定义模拟体系的一维空间离散结构，包括材料总厚度、空间步长分布以及非均匀网格划分方式。
+程序采用一维有限差分格式描述氢同位素在材料深度方向上的输运行为。用户可根据研究对象的特征，对近表面区域、缺陷富集区域或扩散梯度较大的区域采用更细的网格划分，以提高计算精度。
+
+
