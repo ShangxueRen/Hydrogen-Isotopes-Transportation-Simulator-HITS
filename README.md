@@ -124,14 +124,14 @@ Surface side              Bulk region              Surface side
 
 `Sec1`区域对应步长`minstep1`，`Sec2`区域对应步长`minstep2`，`Bulk`区域对应步长`maxstep`，这三个区域内部的空间步长保持不变；`Transition1`中，步长会从`minstep1`线性地过度到`maxstep`，同理`Transition2`中步长会从`maxstep`线性地变化到`minstep2`。
 
-当 `Sec1_t` 与 `Sec2_t` 中仅有一个被设置为 `True` 时，程序只会在对应一侧生成变步长区域。此时，一维体系将被划分为三个区域：
+当 `Sec1_t` 与 `Sec2_t` 中仅有一个被设置为 `True` 时，程序只会在对应一侧生成变步长区域。此时，一维体系将被划分为三个区域。当`'Sec1_t' : True`时：
 
 ```text
 Surface side              Bulk region
 | Sec | Transition | Bulk |
 ```
 
-或者在另一侧对应为：
+或者在另一侧对应为`'Sec2_t' : True`：
 
 ```text
 Bulk region              Surface side
