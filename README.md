@@ -150,3 +150,4 @@ Bulk region              Right surface side
 - `TransWidth` : 步长过渡区域的宽度，单位为 μm ，如果有有两段过渡区域，两段区域长度均为此处设定值   
 - `maxstep` : 体相区域中的最大步长，单位为 μm  
 
+## 3.2 Time and temperature history
