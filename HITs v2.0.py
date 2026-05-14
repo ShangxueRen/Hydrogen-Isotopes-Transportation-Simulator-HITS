@@ -726,6 +726,39 @@ class Genarate_JM_and_VF:
         datas[nx+2] = datas[3*nx+3] = 0.0
         JacobiM = sp.sparse.coo_matrix((datas, (self.rows, self.cols)), shape=(self.M, self.M)).tocsr()
         return JacobiM, vectF
+      
+    def Check_Flux(self, C_list):
+        '''
+        利用物料守恒计算氢脱附通量值，与菲克定律结果比较证明计算值有效
+
+        Parameters
+        C_list : Array of float64, size = [(N_tp + 1)*Nx + 2, Nt]
+            总浓度值表.
+
+        Returns
+        C_out : Array of float64, size = [(N_tp + 1)*Nx + 2]
+            脱附值表.
+
+        '''
+        nx = self.Nx
+        ntp = self.ntp
+        dt = self.dt
+        dx = self.dx
+        nt = C_list.shape[1]
+    
+        C_out = np.zeros(nt, dtype=np.float64)
+        C_s = C_list[1:nx+1, :]
+        C_total = C_s.copy()
+
+        for n in range(ntp):
+            trap_start = (n + 1) * nx + 2
+            trap_end = (n + 2) * nx + 2
+            C_total += C_list[trap_start:trap_end, :]
+
+        N_in = np.sum(C_total * dx[:, None], axis=0)
+        C_out[1:] = -(N_in[1:] - N_in[:-1]) / dt
+        C_out *= DfW / 1e6
+        return C_out
     
 def PDE_NDsolve(dx_list, D_list, trap_list, k_list, dt, maxerr, maxtime, printout=5):
     '''
