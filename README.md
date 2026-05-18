@@ -152,3 +152,29 @@ Bulk region              Right surface side
 - `maxstep` : 体相区域中的最大步长，单位为 μm  
 
 ## 3.2 Time and temperature history
+HITs与He-HITs均采用了后向差分的格式，所以在时间步长的设置上没有设置变步长格式，得益于有限差分算法自身的简洁性与变步长格子的划分方式，使得程序可以在较小时间步长（较多时间迭代轮次）下仍有较高的运算速度。
+
+时间与温度历史的输入参数如下：
+
+```python
+TempDefin = {
+    'Total Time' : 700,            #[s]
+    'dt' : 0.05,                   #[s]
+    'temperature function' : 'TempRampFunc', 
+    'temp func defin' : {
+        'Temperature initial' : 300,    #[K]
+        'TPD_start' : 0,                #time when TPD strat
+        'TPD_rate' : 1.0,               #[K/s]
+        'TPD_end' : 800                 #time when TPD end}, 
+        }
+    }
+```
+
+其中`Total Time`与`dt`为时间定义的部分：
+- `Total Time` : 模拟体系的总时间，单位为 s
+- `dt` : 单步计算的时间间隔，单位为 s
+
+`temperature function`与`temp func defin`为温度历史定义的部分：
+- `temperature function` : 模拟选择的温度函数  
+- `temp func defin` : 选择温度函数对应的定义字典
+
