@@ -74,7 +74,7 @@ For He-HITs, since the diffusion coefficient can vary with spatial position, a f
 
 #### 3.1.1 Uniform Grid
 
-在程序中，空间格子的输入参数通过字典 `GridData` 定义。对于均匀格子，所需的基本参数如下：
+In the program, the input parameters for the spatial grid are defined using the dictionary `GridData`. For a uniform grid, the basic required parameters are as follows:
 
 ```python
 GridData = {
@@ -85,22 +85,22 @@ GridData = {
 }
 ```
 
-其中，`Sec1_t` 与 `Sec2_t` 用于控制是否启用分段变步长网格。当二者均设置为 `False` 时，程序会将输入识别为均匀格子设置。
+Here, `Sec1_t` and `Sec2_t` are used to control whether segmented non-uniform grid regions are enabled. When both of them are set to `False`, the program recognizes the input as a uniform grid configuration.
 
-各参数的含义如下：
+The meanings of the parameters are as follows:
 
-- `Total Depth`：模拟体系的总厚度，单位为 m
-- `maxstep`：空间步长，单位为 μm
-- `Sec1_t`：是否启用第一段变步长区域
-- `Sec2_t`：是否启用第二段变步长区域
+- `Total Depth`: the total thickness of the simulated system, in m
+- `maxstep`: the spatial step size, in μm
+- `Sec1_t`: whether to enable the first non-uniform grid region
+- `Sec2_t`: whether to enable the second non-uniform grid region
 
-需要注意的是，程序内部对空间步长进行了整除修正处理。如果输入的总厚度不是设定步长的整数倍，程序会自动对实际使用的步长进行适当调整，使总厚度能够被空间网格完整划分。因此，`maxstep` 可理解为期望的空间步长，而最终计算中采用的实际步长可能会与该输入值存在轻微差异。
+It should be noted that the program internally applies a divisibility correction to the spatial step size. If the input total thickness is not an integer multiple of the specified step size, the program will automatically adjust the actual step size used in the calculation so that the total depth can be completely divided by the spatial grid. Therefore, `maxstep` can be understood as the expected spatial step size, while the actual step size used in the final calculation may differ slightly from the input value.
 
 #### 3.1.2 Non-uniform Grid
 
-当 `Sec1_t` 与 `Sec2_t` 中至少有一个被设置为 `True` 时，程序会将输入识别为变步长格子。变步长格子用于在特定区域采用更小的空间步长，以提高近表面区域、缺陷富集区域或扩散系数剧烈变化区域的计算精度。
+When at least one of `Sec1_t` and `Sec2_t` is set to `True`, the program recognizes the input as a non-uniform grid configuration. The non-uniform grid is used to apply smaller spatial step sizes in specific regions, thereby improving the computational accuracy in near-surface regions, defect-enriched regions, or regions where the diffusion coefficient changes significantly.
 
-其输入参数示例如下：
+An example of the input parameters is given below:
 
 ```python
 GridData = {
@@ -115,66 +115,100 @@ GridData = {
     'maxstep': 0.5           # [um]
 }
 ```
-其中，`Sec1_t` 与 `Sec2_t` 用于控制是否启用两侧的变步长区域。当 `Sec1_t` 与 `Sec2_t` 均为 `True` 时，程序会将一维体系划分为五个区域：
+
+Here, `Sec1_t` and `Sec2_t` are used to control whether the non-uniform grid regions on the two sides of the one-dimensional domain are enabled. When both `Sec1_t` and `Sec2_t` are set to `True`, the program divides the one-dimensional system into five regions:
 
 ```text
 Surface side              Bulk region              Surface side
 | Sec1 | Transition1 | Bulk | Transition2 | Sec2 |
 ```
 
-`Sec1`区域对应步长`minstep1`，`Sec2`区域对应步长`minstep2`，`Bulk`区域对应步长`maxstep`，这三个区域内部的空间步长保持不变；`Transition1`中，步长会从`minstep1`线性地过度到`maxstep`，同理`Transition2`中步长会从`maxstep`线性地变化到`minstep2`。
+The `Sec1` region uses the spatial step size `minstep1`, the `Sec2` region uses the spatial step size `minstep2`, and the `Bulk` region uses the spatial step size `maxstep`. Within these three regions, the spatial step size remains constant. In the `Transition1` region, the step size linearly increases from `minstep1` to `maxstep`. Similarly, in the `Transition2` region, the step size linearly decreases from `maxstep` to `minstep2`.
 
-当 `Sec1_t` 与 `Sec2_t` 中仅有一个被设置为 `True` 时，程序只会在对应一侧生成变步长区域，此时一维体系将被划分为三个区域。这里，`Sec1_t` 用于控制靠近左侧表面的变步长区域，`Sec2_t` 用于控制靠近右侧表面的变步长区域。
+When only one of `Sec1_t` and `Sec2_t` is set to `True`, the program generates a non-uniform grid region only on the corresponding side, and the one-dimensional system is divided into three regions. Here, `Sec1_t` controls the non-uniform grid region near the left surface, while `Sec2_t` controls the non-uniform grid region near the right surface.
 
-当 `'Sec1_t': True` 且 `'Sec2_t': False` 时，变步长区域位于左侧表面附近，体系划分方式为：
+When `'Sec1_t': True` and `'Sec2_t': False`, the non-uniform grid region is located near the left surface, and the system is divided as follows:
 
 ```text
 Left surface side              Bulk region
 | Sec1 | Transition1 | Bulk |
 ```
 
-当 `'Sec1_t': False` 且 `'Sec2_t': True` 时，变步长区域位于右侧表面附近，体系划分方式为：
+When `'Sec1_t': False` and `'Sec2_t': True`, the non-uniform grid region is located near the right surface, and the system is divided as follows:
 
 ```text
 Bulk region              Right surface side
 | Bulk | Transition2 | Sec2 |
 ```
-各参数的含义如下：
 
-- `Total Depth` : 模拟体系的总厚度，单位为 m  
-- `Sec1_t` : 是否启用第一段变步长区域
-- `Sec1` : 第一段小步长区域的宽度，单位为 μm
--  `minstep1` : 第一段小步长区域中的最小步长，单位为 μm  
-- `Sec2_t` : 是否启用第二段变步长区域
-- `Sec2` : 第二段小步长区域的宽度，单位为 μm  
-- `minstep2` : 第二段小步长区域中的最小步长，单位为 μm  
-- `TransWidth` : 步长过渡区域的宽度，单位为 μm ，如果有有两段过渡区域，两段区域长度均为此处设定值   
-- `maxstep` : 体相区域中的最大步长，单位为 μm  
+The meanings of the parameters are as follows:
+
+- `Total Depth`: the total thickness of the simulated system, in m
+- `Sec1_t`: whether to enable the first non-uniform grid region
+- `Sec1`: the width of the first fine-grid region, in μm
+- `minstep1`: the minimum step size in the first fine-grid region, in μm
+- `Sec2_t`: whether to enable the second non-uniform grid region
+- `Sec2`: the width of the second fine-grid region, in μm
+- `minstep2`: the minimum step size in the second fine-grid region, in μm
+- `TransWidth`: the width of the transition region, in μm. If two transition regions are enabled, both transition regions use this specified width
+- `maxstep`: the maximum step size in the bulk region, in μm
 
 ## 3.2 Time and temperature history
-HITs与He-HITs均采用了后向差分的格式，所以在时间步长的设置上没有设置变步长格式，得益于有限差分算法自身的简洁性与变步长格子的划分方式，使得程序可以在较小时间步长（较多时间迭代轮次）下仍有较高的运算速度。
 
-时间与温度历史的输入参数如下：
+Both HITs and He-HITs use a backward difference scheme for time discretization. In the current version, the program does not use a variable time-step scheme. Instead, the entire simulation is advanced using a fixed time step `dt`. Benefiting from the simplicity of the finite difference algorithm and the use of non-uniform spatial grids, the program can still maintain high computational efficiency even when a relatively small time step and a large number of time iterations are used.
+
+The input parameters for time and temperature history are defined using the dictionary `TempDefin`, as shown below:
 
 ```python
 TempDefin = {
-    'Total Time' : 700,            #[s]
-    'dt' : 0.05,                   #[s]
-    'temperature function' : 'TempRampFunc', 
-    'temp func defin' : {
-        'Temperature initial' : 300,    #[K]
-        'TPD_start' : 0,                #time when TPD strat
-        'TPD_rate' : 1.0,               #[K/s]
-        'TPD_end' : 800                 #time when TPD end}, 
-        }
+    'Total Time': 700,              # [s]
+    'dt': 0.05,                     # [s]
+    'temperature function': 'TempRampFunc',
+    'temp func defin': {
+        'Temperature initial': 300, # [K]
+        'TPD_start': 0,             # [s], time when TPD starts
+        'TPD_rate': 1.0,            # [K/s]
+        'TPD_end': 800              # [s], time when TPD ends
     }
+}
 ```
 
-其中`Total Time`与`dt`为时间定义的部分：
-- `Total Time` : 模拟体系的总时间，单位为 s
-- `dt` : 单步计算的时间间隔，单位为 s
+Here, `Total Time` and `dt` are used to define the time discretization:
 
-`temperature function`与`temp func defin`为温度历史定义的部分：
-- `temperature function` : 模拟选择的温度函数  
-- `temp func defin` : 选择温度函数对应的定义字典
+* `Total Time`: the total duration of the simulation, in s
+* `dt`: the time interval for each calculation step, in s
 
+`temperature function` and `temp func defin` are used to define the temperature history:
+
+* `temperature function`: the name of the temperature function used in the simulation
+* `temp func defin`: the parameter-definition dictionary corresponding to the selected temperature function
+
+The temperature functions currently implemented in the program include:
+
+* `ConstTempFunc`: generates a constant temperature array corresponding to the time list
+* `TempRampFunc`: generates a temperature array with linear heating or cooling
+
+Among them, `TempRampFunc` can handle most common simulation scenarios, such as a linear heating process in TDS simulations, a linear cooling process after gas loading, and isothermal holding after heating or cooling.
+
+For example, when simulating the experimental condition of cooling after gas loading, the temperature-definition dictionary can be set as follows:
+
+```python
+'temp func defin': {
+    'Temperature initial': 473, # [K]
+    'TPD_start': 3600,          # [s]
+    'TPD_rate': -0.1667,        # [K/s]
+    'TPD_end': 4637             # [s]
+}
+```
+
+With this setting, the program keeps the initial temperature at 473 K for the first 3600 s. It then starts linear cooling at 3600 s with a rate of `-0.1667 K/s`. After the time reaches `TPD_end`, the temperature remains approximately at the value reached at the end of the cooling process. In this example, the system cools down to around 300 K and then remains at that temperature.
+
+The program also supports user-defined temperature functions. The definition rules for custom temperature functions can be found in the comments in Part 3. In general, a custom temperature function should satisfy the following requirements:
+
+- The function inputs should include `timelist` and `tempdata`
+- `timelist` is the time list
+- `tempdata` is the variable containing the temperature-definition information, usually in the form of a dictionary
+- The function should return a `numpy` array
+- The length of the returned temperature array must be the same as the length of `timelist`
+
+As long as the custom temperature function satisfies the above format requirements, the existing `GetTempFunc` calling method can be used to generate the corresponding temperature-history list without modifying the main program structure.
