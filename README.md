@@ -28,7 +28,7 @@ These codes are primarily developed for the study of hydrogen isotope transport 
 
 The hydrogen transport is described by a diffusion–trapping system:
 
-$$\frac{\partial C}{\partial t} = \nabla \cdot (D(T)\nabla C) - \sum_i \[k_{t,i} C (\eta_i - C_{t,i})-k_{d,i} C_{t,i}\] + S$$
+$$\frac{\partial C}{\partial t} =\nabla \cdot (D(T)\nabla C)-\sum_i \left[k_{t,i} C (\eta_i - C_{t,i})-k_{d,i} C_{t,i}\right] + S$$
 
 $$\frac{\partial C_{t,i}}{\partial t} = k_{t,i} C (\eta_i - C_{t,i})-k_{d,i} C_{t,i}$$
 
@@ -153,7 +153,7 @@ The meanings of the parameters are as follows:
 - `TransWidth`: the width of the transition region, in μm. If two transition regions are enabled, both transition regions use this specified width
 - `maxstep`: the maximum step size in the bulk region, in μm
 
-## 3.2 Time and temperature history
+### 3.2 Time and temperature history
 
 Both HITs and He-HITs use a backward difference scheme for time discretization. In the current version, the program does not use a variable time-step scheme. Instead, the entire simulation is advanced using a fixed time step `dt`. Benefiting from the simplicity of the finite difference algorithm and the use of non-uniform spatial grids, the program can still maintain high computational efficiency even when a relatively small time step and a large number of time iterations are used.
 
@@ -208,7 +208,39 @@ The program also supports user-defined temperature functions. The definition rul
 - The function inputs should include `timelist` and `tempdata`
 - `timelist` is the time list
 - `tempdata` is the variable containing the temperature-definition information, usually in the form of a dictionary
-- The function should return a `numpy` array
+- The function should return a numpy array
 - The length of the returned temperature array must be the same as the length of `timelist`
 
 As long as the custom temperature function satisfies the above format requirements, the existing `GetTempFunc` calling method can be used to generate the corresponding temperature-history list without modifying the main program structure.
+
+### 3.3 Diffusion Coefficient
+
+In the program, the diffusion coefficient of hydrogen isotopes in the material is described using the Arrhenius form:
+
+$$
+D(T) = D_0 \exp\left(-\frac{E_D}{k_b T}\right)
+$$
+
+where $D(T)$ is the diffusion coefficient at temperature $T$, $D_0$ is the pre-exponential factor, $E_D$ is the diffusion energy barrier, and $k_b$ is the Boltzmann constant.
+
+The parameters related to the diffusion coefficient are defined using the dictionary `DFactorDefin`, as shown below:
+
+```python
+DFactorDefin = {
+    'D_0': 4.1e-7 / 2 ** 0.5,      # for D, [m^2/s]
+    'D_E': 0.39,                   # [eV]
+    'lattice constant': 316        # [pm]
+}
+```
+
+The meanings of the parameters are as follows:
+
+* `D_0`: the pre-exponential factor of the diffusion coefficient, in $\mathrm{m}^2 \mathrm{s}^{-1}$
+* `D_E`: the diffusion energy barrier, in eV
+* `lattice constant`: the lattice constant of the material system, in pm
+
+It should be noted that `lattice constant` is not directly used in the calculation of the diffusion coefficient $D(T)$. Instead, it is used to generate the pre-exponential factor of the trapping rate constant for defects. Since the lattice constant and the diffusion coefficient parameters are both intrinsic physical parameters of the material system, they are defined together in the `DFactorDefin` dictionary.
+
+In HITs, the diffusion coefficient is usually determined only by temperature and is used to describe thermally activated diffusion in a homogeneous material system. In He-HITs, the program can further introduce a spatially dependent effective diffusion coefficient to describe the retardation effect of helium bubble layers or other heterogeneous structures on hydrogen isotope diffusion.
+
+
