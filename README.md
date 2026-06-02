@@ -28,9 +28,9 @@ These codes are primarily developed for the study of hydrogen isotope transport 
 
 The hydrogen transport is described by a diffusion–trapping system:
 
-$$\frac{\partial C}{\partial t} =\nabla \cdot (D(T)\nabla C)-\sum_i \left[k_{t,i} C (\eta_i - C_{t,i})-k_{d,i} C_{t,i}\right] + S$$
+$$\frac{\partial C}{\partial t} =\nabla \cdot (D(T)\nabla C)-\sum_i \left[ k_{t,i} C (\eta_i - C_{t,i})-k_{d,i} C_{t,i} \right] + S \qquad \text{(1)}$$
 
-$$\frac{\partial C_{t,i}}{\partial t} = k_{t,i} C (\eta_i - C_{t,i})-k_{d,i} C_{t,i}$$
+$$\frac{\partial C_{t,i}}{\partial t} = k_{t,i} C (\eta_i - C_{t,i})-k_{d,i} C_{t,i}\qquad \text{(2)}$$
 
 Where:
 
