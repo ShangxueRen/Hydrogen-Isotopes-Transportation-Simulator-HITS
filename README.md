@@ -62,11 +62,18 @@ The term $m_{\mathrm{HI}}$ is introduced to describe the isotope effect on hydro
 
 Similarly, the trapping and detrapping rate constants are expressed in Arrhenius forms:
 
-$$k_{t,i}(T)=k_{t0,i}\exp\left(-\frac{E_{D}}{k_b T}\right) \qquad \text{(4)}$$
+$$k_{t,i}(T)=k_{t0}\exp\left(-\frac{E_{D}}{k_b T}\right) \qquad \text{(4)}$$
 
 $$k_{d,i}(T)=k_{d0}\exp\left(-\frac{E_{D} + E_{t,i}}{k_b T}\right) \qquad \text{(5)}$$
 
-where (k_{t0,i}) and (k_{d0,i}) are the pre-exponential factors for trapping and detrapping at the (i)-th type of defect, respectively. (E_{t,i}) is the activation energy associated with the trapping process, while (E_{d,i}) is the activation energy required for hydrogen to escape from the (i)-th type of trap. These parameters determine the temperature dependence of hydrogen exchange between mobile solute states and immobile trapped states. At low temperature, detrapping is usually suppressed and hydrogen tends to remain trapped. As temperature increases, the detrapping rate rises rapidly, enabling trapped hydrogen to be released back into the solute state and subsequently diffuse through the material.
+The definitions and values of the above parameters mainly refer to the macroscopic rate equation model for hydrogen isotope trapping and detrapping in tungsten proposed by Hodille et al. In Eqs. (4) and (5), $k_{t0}$ and $k_{d0}$ are the pre-exponential factors for trapping and detrapping, respectively. In the current program, the same pre-exponential factors are used for all types of defects. Specifically, $k_{d0}$ is taken as the classical Debye frequency for deuterium atoms, namely $2 \times 10^{13}\ \mathrm{s^{-1}}$. The physical definition and choice of this pre-exponential factor can be found in the work of Hodille et al.
+
+According to Eq. (4), the trapping of hydrogen atoms by defects is treated as a diffusion-controlled process in the current model. Therefore, the activation energy for trapping is taken as the diffusion activation energy $E_D$ of hydrogen isotopes in the metal. For the detrapping process, hydrogen atoms must overcome the binding effect of the defect and return to the mobile solute state. Therefore, the detrapping activation energy for the $i$-th type of defect, $E_{\mathrm{detrap},i}$, is expressed as the sum of the diffusion activation energy $E_D$ and the binding energy $E_{t,i}$ of this defect:
+
+$$E_{\mathrm{detrap},i}=E_D+E_{t,i} \qquad \text{(6)}$$
+
+Thus, in the subsequent parameter definitions, the program generally does not require the detrapping activation energy to be entered separately. Instead, the corresponding detrapping activation energy is automatically determined from the diffusion activation energy and the binding energy of each type of defect.
+
 
 
 The TDS signal is obtained from the surface flux:
