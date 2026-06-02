@@ -26,7 +26,7 @@ These codes are primarily developed for the study of hydrogen isotope transport 
 
 ## 2. Physical Model
 
-### 2.1 Transport of hydrogen isotopes in metals under defect effects
+### 2.1 Transport of hydrogen under defect effects
 
 Defects in metallic materials, such as dislocations, vacancies, self-interstitial atoms, and grain boundaries, can generally act as trapping sites for hydrogen isotopes. When hydrogen atoms interact with these defects, hydrogen–defect complexes may form, causing the trapped hydrogen atoms to lose their ability to migrate freely through the lattice. Therefore, in defect-containing metals, the transport of hydrogen isotopes can essentially be described as a diffusion–reaction process coupled with defect trapping and detrapping.
 
