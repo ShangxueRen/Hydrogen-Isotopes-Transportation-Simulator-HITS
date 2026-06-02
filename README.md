@@ -26,19 +26,48 @@ These codes are primarily developed for the study of hydrogen isotope transport 
 
 ## 2. Physical Model
 
-The hydrogen transport is described by a diffusion–trapping system:
+### 2.1 Transport of hydrogen isotopes in metals under defect effects
 
-$$\frac{\partial C}{\partial t} =\nabla \cdot (D(T)\nabla C)-\sum_i \left[k_{t,i} C (\eta_i - C_{t,i})-k_{d,i} C_{t,i}\right] + S$$
+Defects in metallic materials, such as dislocations, vacancies, self-interstitial atoms, and grain boundaries, can generally act as trapping sites for hydrogen isotopes. When hydrogen atoms interact with these defects, hydrogen–defect complexes may form, causing the trapped hydrogen atoms to lose their ability to migrate freely through the lattice. Therefore, in defect-containing metals, the transport of hydrogen isotopes can essentially be described as a diffusion–reaction process coupled with defect trapping and detrapping.
 
-$$\frac{\partial C_{t,i}}{\partial t} = k_{t,i} C (\eta_i - C_{t,i})-k_{d,i} C_{t,i}$$
+In this program, the trapping and detrapping processes between hydrogen isotopes and defects are described using macroscopic rate equations. The macroscopic rate equation method is a continuum theory based on the mean-field approximation. Instead of explicitly tracking the microscopic motion of individual hydrogen atoms or defects, this approach uses macroscopic physical quantities, such as hydrogen concentration and defect concentration, to describe the average reaction rates between hydrogen atoms and defects.
+
+Before presenting the governing equations, the hydrogen concentration in metals should first be classified and defined. In this work, hydrogen atoms located in the interstitial sites of the metal lattice and capable of freely migrating by atomic jumps are referred to as solute hydrogen, with their concentration denoted by $C_s$. Solute hydrogen is the main carrier of diffusive transport, and its migration is described by Fick’s law of diffusion. In contrast, hydrogen atoms trapped by defects are referred to as trapped hydrogen. The concentration of hydrogen trapped by the $i$-th type of defect is denoted by $C_{t,i}$. Physically, $C_{t,i}$ represents the concentration of hydrogen–defect complexes. This portion of hydrogen no longer participates in long-range diffusion. Its formation and dissociation are governed by trapping and detrapping processes, respectively, and are described by rate equations.
+
+Based on these definitions, the diffusion–trapping equations for hydrogen isotopes in defect-containing metals can be written as:
+
+$$\frac{\partial C_s}{\partial t} =\nabla \cdot (D(T)\nabla C_s)-\sum_i \left[k_{t,i} C_s (\eta_i - C_{t,i})-k_{d,i} C_{t,i}\right] + S \qquad \text{(1)}$$
+
+$$\frac{\partial C_{t,i}}{\partial t} = k_{t,i} C_s (\eta_i - C_{t,i})-k_{d,i} C_{t,i} \qquad \text{(2)}$$
 
 Where:
 
-- $C$: mobile hydrogen concentration  
-- $C_{t,i}$: trapped hydrogen concentration for trap i  
-- $D(T)$: temperature-dependent diffusion coefficient  
-- $\eta$: trap density  
-- $k_{t,i}$, $k_{d,i}$: trapping and detrapping rate constants
+- $D(T)$ is the diffusion coefficient of hydrogen isotope atoms in the material system;
+- $\eta_i$ is the spatial distribution of the concentration of the (i)-th type of defect, which represents the total concentration of available trapping sites;
+- $k_{t,i}$ and $k_{d,i}$ are the trapping and detrapping rate constants for the (i)-th type of defect, respectively;
+- $S$ is the source term, which can be used to describe hydrogen isotope implantation or other external input processes.
+
+The diffusion coefficient, trapping rate constant, and detrapping rate constant are all treated as temperature-dependent kinetic parameters. The diffusion coefficient follows an Arrhenius-type expression with an additional isotope-mass correction:
+
+$$D(T)=\frac{D_0}{\sqrt{m_{\mathrm{HI}}}}\exp\left(-\frac{E_D}{k_b T}\right)\qquad \text{(3)}$$
+
+where:
+
+- $D_0$ is the pre-exponential factor for hydrogen diffusion  
+- $m_{\mathrm{HI}}$ is the relative atomic mass of the hydrogen isotope  
+- $E_D$ is the diffusion activation energy  
+- $k_b$ is the Boltzmann constant  
+
+The term $m_{\mathrm{HI}}$ is introduced to describe the isotope effect on hydrogen isotope diffusion. For protium, deuterium, and tritium, $m_{\mathrm{HI}}$ can be taken as 1, 2, and 3, respectively. Since heavier isotopes generally have lower characteristic vibration and jump frequencies, the diffusion coefficient decreases with increasing isotope mass.
+
+Similarly, the trapping and detrapping rate constants are expressed in Arrhenius forms:
+
+$$k_{t,i}(T)=k_{t0,i}\exp\left(-\frac{E_{D}}{k_b T}\right) \qquad \text{(4)}$$
+
+$$k_{d,i}(T)=k_{d0}\exp\left(-\frac{E_{D} + E_{t,i}}{k_b T}\right) \qquad \text{(5)}$$
+
+where (k_{t0,i}) and (k_{d0,i}) are the pre-exponential factors for trapping and detrapping at the (i)-th type of defect, respectively. (E_{t,i}) is the activation energy associated with the trapping process, while (E_{d,i}) is the activation energy required for hydrogen to escape from the (i)-th type of trap. These parameters determine the temperature dependence of hydrogen exchange between mobile solute states and immobile trapped states. At low temperature, detrapping is usually suppressed and hydrogen tends to remain trapped. As temperature increases, the detrapping rate rises rapidly, enabling trapped hydrogen to be released back into the solute state and subsequently diffuse through the material.
+
 
 The TDS signal is obtained from the surface flux:
 
@@ -62,7 +91,7 @@ In general, the input parameters can be divided into the following seven parts:
 7. Data saving parameters  
 
 ### 3.1 One-Dimensional Spatial Grid
-HITs and He-HITs both use the finite difference method to calculate one-dimensional hydrogen isotope transport behavior. In the simulation, the spatial coordinate represents the depth direction from the sample surface into the bulk. Therefore, before performing the calculation, the material system must first be spatially discretized to construct a one-dimensional spatial grid for numerical solution.
+HITs and He-HITs both use the finite difference method to calculate one-dimensional hydrogen isotope transport. In the simulation, the spatial coordinate represents the depth direction from the sample surface into the bulk. Therefore, before performing the calculation, the material system must first be spatially discretized to construct a one-dimensional spatial grid for numerical solution.
 
 The program supports two types of spatial grids: a uniform grid with constant spacing throughout the bulk material, and a non-uniform grid with spatially varying grid spacing. The choice of spatial grid directly affects both computational accuracy and efficiency. For the finite difference method adopted in HITs and He-HITs, when a second-order spatial discretization scheme and a first-order implicit time integration scheme are used, the local truncation error can generally be expressed as:
 
