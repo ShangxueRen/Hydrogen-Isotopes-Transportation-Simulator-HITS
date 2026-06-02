@@ -74,13 +74,33 @@ $$E_{\mathrm{detrap},i}=E_D+E_{t,i} \qquad \text{(6)}$$
 
 Thus, in the subsequent parameter definitions, the program generally does not require the detrapping activation energy to be entered separately. Instead, the corresponding detrapping activation energy is automatically determined from the diffusion activation energy and the binding energy of each type of defect.
 
+When solving the above diffusion–trapping partial differential equation system, appropriate boundary conditions must also be specified. For hydrogen isotope desorption from metals under vacuum conditions, several studies have shown that a Dirichlet boundary condition can be used to approximate rapid desorption at the sample surfaces. In this case, the solute hydrogen concentration at the sample surfaces is assumed to remain zero:
 
+$$C_s(0,t)=C_s(L,t)=0\qquad \text{(7)}$$
 
-The TDS signal is obtained from the surface flux:
+where $L$ is the sample thickness along the transport direction. This boundary condition indicates that mobile hydrogen atoms reaching the surface are rapidly desorbed from the metal into the vacuum environment, so no significant accumulation of solute hydrogen occurs at the surfaces.
 
-$$
-J = -D \frac{\partial C}{\partial x}
-$$
+Under this boundary condition, the hydrogen isotope desorption flux can be calculated in two ways. The first method is based directly on Fick’s first law. The diffusion flux at the sample surface is calculated from the concentration gradient of solute hydrogen near the boundary:
+
+$$J=-D(T)\frac{\partial C_s}{\partial x}\qquad \text{(8)}$$
+
+In a one-dimensional model, the desorption fluxes from the left and right surfaces can be obtained from the concentration gradients at $x=0$ and $x=L$, respectively. This method directly describes the process in which solute hydrogen diffuses from the metal interior toward the surfaces and desorbs into vacuum.
+
+The second method is based on the change in the total hydrogen isotope inventory inside the system. In the metal, the local total hydrogen concentration can be expressed as the sum of the solute hydrogen concentration and the concentrations of hydrogen trapped at all types of defects:
+
+$$C_{\mathrm{total}}=C_s+\sum_i C_{t,i}\qquad \text{(9)}$$
+
+By further integrating this quantity over the sample thickness, the total hydrogen isotope inventory per unit surface area inside the metal can be obtained:
+
+$$\Gamma_{\mathrm{total}}(t)=\int_0^L\left(C_s+\sum_i C_{t,i}\right)dx \qquad \text{(10)}$$
+
+Therefore, the decrease rate of the hydrogen inventory per unit surface area can be used to calculate the total desorption flux:
+
+$$J_{\mathrm{total}}(t)=\frac{d\Gamma_{\mathrm{total}}(t)}{dt}\qquad \text{(11)}$$
+
+This method calculates the total amount of hydrogen isotopes released from the metal based on overall mass conservation, without relying on the local concentration gradient at a specific boundary. By comparing the surface flux obtained from Fick’s first law with the desorption flux obtained from the change in total inventory, the mass conservation and numerical reliability of the algorithm can be cross-validated.
+
+In the current program, the desorption flux is calculated using Fick’s first law, while the inventory-based flux calculation function is also retained and can be called for mass-conservation and numerical reliability verification.
 
 ---
 
