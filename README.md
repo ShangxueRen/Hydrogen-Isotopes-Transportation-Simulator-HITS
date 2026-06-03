@@ -1,4 +1,4 @@
-# Hydrogen Isotopes Transportation Simulator, HITs
+# Hydrogen Isotopes Transportation Simulator
 
 ## 1. Overview
 
