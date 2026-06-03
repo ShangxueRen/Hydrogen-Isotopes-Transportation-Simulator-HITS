@@ -360,6 +360,18 @@ TrapData = {
 
 In this dictionary, `ETS` represents the detrapping energy of hydrogen isotopes at the trap site, and `beta0` is the detrapping pre-exponential factor. The keyword `constanttrapprof` indicates that the trap concentration is spatially uniform. The value `conc = 1e-5` defines the trap concentration in atomic fraction.
 
+The initial condition of the partial differential equation system is also an essential part of this TDS test case. At the initial time, all solute deuterium is assumed to be absent from the material, while all trapping sites are assumed to be fully occupied by trapped deuterium. In other words, there is initially no freely mobile deuterium in the lattice, and all deuterium inventory is stored in the trap state. The initial condition can be written as:
+
+$$C_s(x,0)=0$$
+$$C_{t,1}(x,0)=\eta_1(x)=1 \times 10^{-5}$$
+
+for all spatial positions. This initial condition corresponds to a pre-loaded sample in which the retained deuterium is assumed to be completely trapped before the TDS heating process begins.
+
+No additional hydrogen isotope source is introduced during the simulation. Therefore, the source term in the diffusion–trapping equation is set to zero:
+
+$$S(x,t)=0$$
+
+This means that the system only undergoes redistribution, detrapping, diffusion, and desorption of the initially retained deuterium, without any external deuterium implantation, gas loading, or other supply during the TDS process.
 The temperature history for this example can be defined as a linear heating process:
 
 ```python
