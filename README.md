@@ -300,3 +300,82 @@ It should be noted that `lattice constant` is not directly used in the calculati
 In HITs, the diffusion coefficient is usually determined only by temperature and is used to describe thermally activated diffusion in a homogeneous material system. In He-HITs, the program can further introduce a spatially dependent effective diffusion coefficient to describe the retardation effect of helium bubble layers or other heterogeneous structures on hydrogen isotope diffusion.
 
 
+## 4. Example Run: A Simple TDS Simulation Case
+
+This section provides a simple trial run for performing a thermal desorption spectroscopy (TDS) simulation using HITs. The purpose of this example is to demonstrate how to define a basic hydrogen isotope transport problem with a single uniformly distributed trap type. No experimental TDS data are imported in this case; therefore, the calculated desorption spectrum is generated only from the input physical parameters and the numerical solution of the diffusion–trapping equations.
+
+In this example, the simulated system is a one-dimensional tungsten sample with a thickness of 1.5 mm. The TDS process starts from $t=0\ \mathrm{s}$, with an initial temperature of 300 K. The sample is heated linearly for 700 s at a heating rate of $1\ \mathrm{K/s}$. Thus, the temperature increases from 300 K to 1000 K during the simulation.
+
+The diffusion coefficient of deuterium in tungsten is defined using an Arrhenius-type expression. Since the isotope-mass correction for deuterium has already been included in the input value of (D_0), the diffusion coefficient used in this example is written as:
+
+$$D(T)=D_0\exp\left(-\frac{E_D}{k_b T}\right)$$
+
+Substituting the input values,
+
+$$D_0=\frac{4.1 \times 10^{-7}}{\sqrt{2}}=2.899 \times 10^{-7}\ \mathrm{m^2/s}$$
+
+and
+
+$$E_D=0.39\ \mathrm{eV}$$
+
+the numerical expression of the diffusion coefficient becomes:
+
+$$D(T)=2.899 \times 10^{-7}\exp\left(-\frac{0.39}{8.617 \times 10^{-5} T}\right)\ \mathrm{m^2/s}$$
+
+where $T$ is the absolute temperature in Kelvin.
+
+In the input dictionary, these diffusion-related parameters are defined as follows:
+
+```python
+DFactorDefin = {
+    'D_0' : 4.1e-7 / 2 ** 0.5,      # for D, [m^2/s]
+    'D_E' : 0.39,                   # diffusion activation energy, [eV]
+    'lattice constant' : 316        # lattice constant of W, [pm]
+}
+```
+
+Only one type of trap is considered in the material. This trap is assumed to be uniformly distributed throughout the sample, with a trap concentration of $1 \times 10^{-5}$ in atomic fraction. The binding energy of deuterium at this trap site is set to 1.00 eV.
+
+For this trap, the detrapping rate constant is calculated as:
+
+$$k_{d,1}(T)=2 \times 10^{13}\exp\left(-\frac{1.39}{8.617 \times 10^{-5} T}\right)\ \mathrm{s^{-1}}$$
+
+where $T$ is the absolute temperature in Kelvin.
+
+The trap configuration is defined as follows:
+
+```python
+TrapData = {
+    'trap1' : {
+        'ETS' : 1.39,
+        'beta0' : 2e13,
+        'distri_fuc' : 'constanttrapprof',
+        'distri_data' : {
+            'conc' : 1e-5
+        },
+        'trap factor plot' : False
+    }
+}
+```
+
+In this dictionary, `ETS` represents the detrapping energy of hydrogen isotopes at the trap site, and `beta0` is the detrapping pre-exponential factor. The keyword `constanttrapprof` indicates that the trap concentration is spatially uniform. The value `conc = 1e-5` defines the trap concentration in atomic fraction.
+
+The temperature history for this example can be defined as a linear heating process:
+
+```python
+TempDefin = {
+    'Total Time' : 700,             # total simulation time, [s]
+    'dt' : 0.05,                    # time step, [s]
+    'temperature function' : 'TempRampFunc',
+    'temp func defin' : {
+        'Temperature initial' : 300,    # initial temperature, [K]
+        'TPD_start' : 0,                # time when TDS starts, [s]
+        'TPD_rate' : 1.0,               # heating rate, [K/s]
+        'TPD_end' : 700                 # time when TDS heating ends, [s]
+    }
+}
+```
+
+The spatial domain is defined as a tungsten slab with a total thickness of 1.5 mm. A one-dimensional grid is constructed along the sample thickness direction, and hydrogen isotope transport is solved between the two sample surfaces. Under vacuum desorption conditions, the solute hydrogen concentration at both surfaces is set to zero using the Dirichlet boundary condition introduced in Section 2.
+
+This test case provides a minimal example for running a TDS simulation without fitting to experimental data. It can be used to verify the basic workflow of HITs, including parameter definition, temperature generation, trap distribution construction, numerical solution of the diffusion–trapping equations, and calculation of the desorption flux.
