@@ -1,4 +1,4 @@
-# 氢同位素输运模拟程序HITs
+# Hydrogen Isotopes Transportation Simulator, HITs
 
 ## 1. Overview
 
