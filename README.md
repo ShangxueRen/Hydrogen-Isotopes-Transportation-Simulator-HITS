@@ -44,7 +44,7 @@ Where:
 
 - $D(T)$ is the diffusion coefficient of hydrogen isotope atoms in the material system;
 - $\eta_i$ is the spatial distribution of the concentration of the (i)-th type of defect, which represents the total concentration of available trapping sites;
-- $k_{t,i}$ and $k_{d,i}$ are the trapping and detrapping rate constants for the (i)-th type of defect, respectively;
+- $k_{t,i}$ and $k_{d,i}$ are the trapping and detrapping rate constants for the $i$-th type of defect, respectively;
 - $S$ is the source term, which can be used to describe hydrogen isotope implantation or other external input processes.
 
 The diffusion coefficient, trapping rate constant, and detrapping rate constant are all treated as temperature-dependent kinetic parameters. The diffusion coefficient follows an Arrhenius-type expression with an additional isotope-mass correction:
